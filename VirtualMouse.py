@@ -55,7 +55,7 @@ while cap.isOpened():
         if fingers[1] == 1 and fingers[2] == 1:
             # 9. Find distance between fingers
             length, img, lineInfo = detector.findDistance(8, 12, img)
-            print(length)
+            # print(length)
             # 10. Click mouse if distance short
             if length < 20:
                 cv.circle(img, (lineInfo[4], lineInfo[5]), 15, (0, 255, 0), cv.FILLED)
