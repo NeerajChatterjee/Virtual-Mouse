@@ -5,6 +5,8 @@ import math
 
 
 class handDetector():
+
+    ## An initialiser for the variables with the default values
     def __init__(self, mode=False, maxHands=2, detectionCon=0.5, trackCon=0.5):
         self.mode = mode
         self.maxHands = maxHands
@@ -16,6 +18,7 @@ class handDetector():
         self.mpDraw = mp.solutions.drawing_utils
         self.tipIds = [4, 8, 12, 16, 20]
 
+    ## Functions take image and bool draw as an argument and return an image with the hand-drawn on the image
     def findHands(self, img, draw=True):
         imgRGB = cv.cvtColor(img, cv.COLOR_BGR2RGB)
         self.results = self.hands.process(imgRGB)
@@ -27,6 +30,8 @@ class handDetector():
                                                self.mpHands.HAND_CONNECTIONS)
         return img
 
+    ## The function takes the image, count of hands, and bool draw as an argument and returns
+    ## the list of indices for the position of the fingers that have different parts of the hand.
     def findPosition(self, img, handNo=0, draw=True):
         xList = []
         yList = []
@@ -52,11 +57,13 @@ class handDetector():
             ymin, ymax = min(yList), max(yList)
             bbox = xmin, ymin, xmax, ymax
 
+            ## Draws a rectangular box outside the drawn hand
             if draw:
                 cv.rectangle(img, (xmin - 20, ymin - 20), (xmax + 20, ymax + 20), (0, 255, 0), 2)
 
         return self.lmList, bbox
 
+    ## Returns the fingers that are Up or basically returns the fingers whose tips are above
     def fingersUp(self):
         fingers = []
 
@@ -75,11 +82,13 @@ class handDetector():
 
         return fingers
 
+    ## Returns the distance between the two-finger positions that are passed as the arguments
     def findDistance(self, p1, p2, img, draw=True, r=15, t=3):
         x1, y1 = self.lmList[p1][1:]
         x2, y2 = self.lmList[p2][1:]
         cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
 
+        ## Draws a circle on the tip of the Up fingers, and we require to find the distance between them.
         if draw:
             cv.line(img, (x1, y1), (x2, y2), (255, 0, 255), t)
             cv.circle(img, (x1, y1), r, (255, 0, 255), cv.FILLED)
@@ -103,6 +112,9 @@ def main():
         if len(lmList) != 0:
             # print(lmList[4])
             fingers = detector.fingersUp()
+
+            ## Commenting on the print statements improves the performance of the virtual mouse
+            ## which helps in using the virtual mouse smoothly with no lag
             print(fingers)
 
         cTime = time.time()
@@ -115,6 +127,7 @@ def main():
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
 
+    ## It's used to release and destroy all the windows that were created while using virtual mouse.
     cap.release()
     cv.destroyAllWindows()
 

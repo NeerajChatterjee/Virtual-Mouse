@@ -14,9 +14,12 @@ pTime = 0
 plocX, plocY = 0, 0
 clocX, clocY = 0, 0
 
+## Capturing the video using computer vision
 cap = cv.VideoCapture(0)
 cap.set(3, wCam)
 cap.set(4, hCam)
+
+## Creating an object for the hand detector
 detector = htm.handDetector(maxHands=1, detectionCon=0.6)
 wScr, hScr = pyautogui.size()
 print(wScr, hScr)
@@ -24,7 +27,10 @@ print(wScr, hScr)
 while cap.isOpened():
     # 1. Find hand Landmarks
     success, img = cap.read()
+
+    ## It flips the image which can be useful in certain cases
     # img = cv.flip(img,1)
+
     img = detector.findHands(img)
     lmList, bbox = detector.findPosition(img)
     # 2. Get the tip of the index and middle fingers
@@ -67,12 +73,15 @@ while cap.isOpened():
     pTime = cTime
     cv.putText(img, str(int(fps)), (20, 50), cv.FONT_HERSHEY_PLAIN, 3,
                (255, 0, 0), 3)
-    # 12. Display
+
+    ## 12. Display the image
     cv.imshow("Image", img)
     # cv.imshow("Screen", imgcanvas)
 
+    ## it will wait for an input and if the input given by the user is 'q' then the loop will break and VM terminates.
     if cv.waitKey(1) & 0xFF == ord('q'):
         break
 
+## It's used to release and destroy all the windows that were created while using virtual mouse.
 cap.release()
 cv.destroyAllWindows()
